@@ -8,7 +8,7 @@ def log(str):
     print(str)
     
 def output_callback(line):
-    print(line)  # Example: Print live output
+    log(line)  # Example: Print live output
 
 def get_hard_drive_size(drive_path='/'):
     try:
@@ -16,14 +16,14 @@ def get_hard_drive_size(drive_path='/'):
         total_size = partition.total / (1024 ** 3)  # Convert bytes to gigabytes
         return total_size
     except Exception as e:
-        print(f"Error: {str(e)}")
+        log(f"Error: {str(e)}")
 
 def run_command(cmd):
     command_runner = ThreadedCommandRunner(cmd)
     command_runner.start(output_callback)
     command_runner.wait()  # Wait for the command to finish
     exit_code = command_runner.exit_code
-    print(f"Command exit code: {exit_code}")
+    log(f"Command exit code: {exit_code}")
     command_runner.stop() # Cleanup resources
     return exit_code
 
@@ -45,31 +45,35 @@ def is_drive_mounted(drive_path):
 
     for partition in partitions:
         if partition.mountpoint.rstrip('\\/') == drive_path:
-            print(f"{drive_path} is mounted")
+            log(f"{drive_path} is mounted")
             return True
-    print(f"Drive is not mounted")
+    log(f"Drive is not mounted")
     return False
 
 def is_space_for_plot():
-    print(f"Checking drive space")
+    log(f"Checking drive space")
     mounted = is_drive_mounted(DST_PATH)
     size = get_hard_drive_size(DST_PATH)
     if mounted and size > MIN_HDD_SPACE:
-        print(f"Free space: {size}")
+        log(f"Free space: {size}")
         return True   
     if not mounted:
         return False
     else:
-        print(f"Not enough space on {DST_PATH}: {size}")
+        log(f"Not enough space on {DST_PATH}: {size}")
         return False
 
 def loop():
     clear_tmp()
-    # should disk be formatted?
-        # is the drive attached?
-        # partition named PLOTS exists
-            # no
-        # else yes      
+    # Drive is attached
+        # Drive does not have a partition named PLOTS            
+            # Format
+    # Drive is attached
+        # Drive has a partition named PLOTS
+            # Do not format
+    # Drive is not attached
+            # Error state
+
     # while is_space_for_plot():
     plot()
     
