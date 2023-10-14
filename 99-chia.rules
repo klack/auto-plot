@@ -1,0 +1,2 @@
+SUBSYSTEM=="block", ACTION=="add|change", ENV{ID_PATH}=="pci-0000:00:1f.2-ata-5.0", ENV{DEVTYPE}=="disk", RUN+="/usr/local/bin/trigger.sh", SYMLINK+="chiadst"
+SUBSYSTEM=="block", ACTION=="add|change", ENV{ID_PATH}=="pci-0000:00:1f.2-ata-5.0", ENV{ID_PART_ENTRY_NUMBER}=="1", RUN+="/usr/local/bin/trigger.sh", SYMLINK+="chiadst1"
