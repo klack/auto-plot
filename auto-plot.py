@@ -19,7 +19,7 @@ def get_free_space_gb(path='/'):
 
 # Runs a single threaded command and returns the exit code
 def run_command(cmd):
-    log(f"Running command {cmd}")
+    log(f"Running command: {cmd}")
     command_runner = ThreadedCommandRunner(cmd)
     command_runner.start(output_callback)
     command_runner.wait()  # Wait for the command to finish
