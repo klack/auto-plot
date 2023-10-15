@@ -138,3 +138,4 @@ def wait_for_hdd():
 while True:    
     plot_until_full()
     wait_for_hdd()
+    #TODO prune plots under correct size
