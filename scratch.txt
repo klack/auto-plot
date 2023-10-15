@@ -30,12 +30,12 @@ sudo mount -t exfat /dev/chiadst1 /chia/dst
 #   Beep until drive is removed
 #   Start loop over when new drive is detected
 
-# Delete files
+### Delete files
 # Logging
 # Alerts
-# Clear out temp folders
+### Clear out temp folders
 # crontab so it runs on startup
 # run under tmux so it runs like a deamon and session can be resumed
-# ability to resume without reformatting the drive, hard drive labels?
+### ability to resume without reformatting the drive, hard drive labels?
 
 # sudo e2label /dev/sda5 "MY_BACKUP"
