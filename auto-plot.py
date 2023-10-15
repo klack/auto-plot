@@ -1,5 +1,5 @@
 from ThreadedCommandRunner import ThreadedCommandRunner
-import psutil
+import psutil, os
 
 DST_PATH = '/chia/dst/'
 MIN_HDD_SPACE = 109 #TB
@@ -34,7 +34,7 @@ def run_command(cmd):
 # Plot one plot
 def plot():
     log("Plotting a plot")
-    cmd = f"chia_plot -n -1 -r 32 -t /chia/tmp/1/ -2 /chia/tmp/2/ -d {DST_PATH} -p 8c70cc58a37cc8f68b916fac8101e637ba999be58383e836335ab07f0524c2c09f2db9cee83c88f731ee7b40381a0eac -f b1833b2ff7c1b2a87654c93b3af6d07a1788b5edee7036e878b64a1b22ecfa7ba608152f1b368404037cef29fad1438a"
+    cmd = (f"/opt/chia-plotter/build/chia_plot -n -1 -r 32 -t /chia/tmp/1/ -2 /chia/tmp/2/ -d {DST_PATH} -p 8c70cc58a37cc8f68b916fac8101e637ba999be58383e836335ab07f0524c2c09f2db9cee83c88f731ee7b40381a0eac -f b1833b2ff7c1b2a87654c93b3af6d07a1788b5edee7036e878b64a1b22ecfa7ba608152f1b368404037cef29fad1438a")
     return run_command(cmd)   
 
 # Clear temporary files used by madmax
@@ -60,14 +60,14 @@ def is_drive_mounted(drive_path):
     log(f"Drive is not mounted")
     return False
 
-def folder_exists(folder_path):
-    return os.path.exists(folder_path) and os.path.isdir(folder_path)
+def path_exists(folder_path):
+    return os.path.exists(folder_path)
 
 def drive_is_attached():
-    return folder_exists("/dev/chiadst") # chiadst only exists when udev detects a drive attached to port 5
+    return path_exists("/dev/chiadst") # chiadst only exists when udev detects a drive attached to port 5
 
 def plot_partition_exists():
-    return folder_exists("/dev/disk/by-label/PLOTS")
+    return path_exists("/dev/disk/by-label/PLOTS")
 
 def unmount():
     cmd = "umount /dev/chiadst"
