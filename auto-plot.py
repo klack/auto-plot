@@ -2,7 +2,7 @@ from ThreadedCommandRunner import ThreadedCommandRunner
 import psutil, os, time
 
 DST_PATH = '/chia/dst/'
-MIN_HDD_SPACE = 109 #TB
+MIN_HDD_SPACE = 109 #GB
 
 # Log output
 def log(str, end="\n", flush=False):
@@ -12,14 +12,10 @@ def log(str, end="\n", flush=False):
 def output_callback(line):
     log(line)  # Example: Print live output
 
-# Get hard drive size in gigabytes
-def get_hard_drive_size(drive_path='/'):
-    try:
-        partition = psutil.disk_usage(drive_path)
-        total_size = partition.total / (1024 ** 3)  # Convert bytes to gigabytes
-        return total_size
-    except Exception as e:
-        log(f"Error: {str(e)}")
+def get_free_space_gb(path='/'):
+    disk_info = psutil.disk_usage(path)
+    free_space_gb = disk_info.free / (2**30)  # Convert bytes to gigabytes
+    return free_space_gb
 
 # Runs a single threaded command and returns the exit code
 def run_command(cmd):
@@ -87,15 +83,15 @@ def unmount():
 def is_space_for_plot():
     log(f"Checking drive space")
     mounted = is_drive_mounted(DST_PATH)
-    size = get_hard_drive_size(DST_PATH)
-    if mounted and size > MIN_HDD_SPACE:
-        log(f"Free space: {size}")
+    free = get_free_space_gb(DST_PATH)
+    if mounted and free > MIN_HDD_SPACE:
+        log(f"Free space: {free}")
         return True   
     if not mounted:
         log(f"{DST_PATH} is not mounted")
         return False
     else:
-        log(f"Not enough space on {DST_PATH}: {size}")
+        log(f"Not enough space on {DST_PATH}: {free}")
         return False
 
 # Checks if hard drive is formated, format if not
