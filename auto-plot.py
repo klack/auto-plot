@@ -73,6 +73,11 @@ def drive_is_attached():
 def plot_partition_exists():
     return path_exists("/dev/disk/by-label/PLOTS")
 
+# Remount drives
+def remount():
+    cmd = "mount -a"
+    return run_command(cmd)
+
 # Unmount a drive
 def unmount():
     cmd = "umount /dev/chiadst"
@@ -96,6 +101,7 @@ def is_space_for_plot():
 # Checks if hard drive is formated, format if not
 def prepare_hdd():
     if drive_is_attached():
+        remount()
         if plot_partition_exists():
             log(f"Drive is already prepared")
             return True
@@ -119,15 +125,16 @@ def plot_until_full():
                 break
         log("No more space, stopping plotting")
     else:
-        log("Failed Preparing HDD")
+        log("Hard drive is not prepared")
 
 def wait_for_hdd():
     log("Waiting for drive to be attached")
     while not drive_is_attached():
         time.sleep(10)
         print(".", end="", flush=True)
+    log("No longer waiting")
 
 # Main program loop
 while True:    
     plot_until_full()
-    # wait_for_hdd()
+    wait_for_hdd()
