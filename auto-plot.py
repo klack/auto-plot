@@ -1,12 +1,12 @@
 from ThreadedCommandRunner import ThreadedCommandRunner
-import psutil, os
+import psutil, os, time
 
 DST_PATH = '/chia/dst/'
 MIN_HDD_SPACE = 109 #TB
 
 # Log output
-def log(str):
-    print(str)
+def log(str, end="\n", flush=False):
+    print(str, end="\n", flush=flush)
     
 # Callback used by ThreadedCommandRunner
 def output_callback(line):
@@ -109,8 +109,7 @@ def prepare_hdd():
         log(f"No drive attached")
         return False
 
-# Main program loop
-def loop():
+def plot_until_full():
     if prepare_hdd():
         clear_tmp()
         while is_space_for_plot():
@@ -118,9 +117,17 @@ def loop():
             if exit_code != 0:
                 log("Recieved non zero exit code")
                 break
-            # unmount disk and alert user
-        log("Stopping plotting")
+        log("No more space, stopping plotting")
     else:
         log("Failed Preparing HDD")
 
-loop()
+def wait_for_hdd():
+    log("Waiting for drive to be attached")
+    while not drive_is_attached():
+        time.sleep(10)
+        print(".", end="", flush=True)
+
+# Main program loop
+while True:    
+    plot_until_full()
+    # wait_for_hdd()
