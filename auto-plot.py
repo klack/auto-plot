@@ -52,9 +52,9 @@ def is_drive_mounted(drive_path):
 
     for partition in partitions:
         if partition.mountpoint.rstrip('\\/') == drive_path:
-            log(f"{drive_path} is mounted")
+            # log(f"{drive_path} is mounted")
             return True
-    log(f"Drive is not mounted")
+    # log(f"Drive is not mounted")
     return False
 
 # Check if a path exists
@@ -76,7 +76,7 @@ def remount():
 
 # Unmount a drive
 def unmount():
-    cmd = "umount /dev/chiadst"
+    cmd = "umount /dev/chiadst1"
     return run_command(cmd)
 
 # Check if there is enough free space on the mounted drive
@@ -97,7 +97,6 @@ def is_space_for_plot():
 # Checks if hard drive is formated, format if not
 def prepare_hdd():
     if drive_is_attached():
-        remount()
         if plot_partition_exists():
             log(f"Drive is already prepared")
             return True
@@ -113,19 +112,21 @@ def prepare_hdd():
 
 def plot_until_full():
     if prepare_hdd():
+        time.sleep(10)
+        remount()
         clear_tmp()
         while is_space_for_plot():
             exit_code = plot()
             if exit_code != 0:
                 log("Recieved non zero exit code")
-                break
+                return
         log("No more space, stopping plotting")
     else:
         log("Hard drive is not prepared")
 
 def wait_for_hdd():
     log("Waiting for drive to be attached")
-    while not drive_is_attached():
+    while not is_drive_mounted(DST_PATH) :
         time.sleep(10)
         print(".", end="", flush=True)
     log("No longer waiting")
@@ -133,5 +134,7 @@ def wait_for_hdd():
 # Main program loop
 while True:    
     plot_until_full()
+    unmount()
     wait_for_hdd()
     #TODO prune plots under correct size
+    
