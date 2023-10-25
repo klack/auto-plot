@@ -76,7 +76,7 @@ def remount():
 
 # Unmount a drive
 def unmount():
-    cmd = "umount /dev/chiadst1"
+    cmd = "umount /dev/chiadst1 && rm /dev/chiadst"
     return run_command(cmd)
 
 # Check if there is enough free space on the mounted drive
@@ -101,6 +101,7 @@ def prepare_hdd():
             log(f"Drive is already prepared")
             return True
         else:
+            log(f"Formatting disk")
             exit_code = format_disk()
             if exit_code == 0:
                 return True
@@ -126,7 +127,7 @@ def plot_until_full():
 
 def wait_for_hdd():
     log("Waiting for drive to be attached")
-    while not is_drive_mounted(DST_PATH) :
+    while not drive_is_attached():
         time.sleep(10)
         print(".", end="", flush=True)
     log("No longer waiting")
