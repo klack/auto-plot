@@ -14,6 +14,7 @@ NC='\033[0m' # No Color
 # Return Exit Code
 echo -e "${LIGHT_BLUE}|Preparing Disk|${NC}"
 umount /chia/dst || /bin/true && \
+    sudo mdadm --stop --scan && \
     wipefs -a /dev/chiadst && \
     parted -s /dev/chiadst mklabel gpt && \
     parted -s /dev/chiadst mkpart CHIA 0% 100% && \
