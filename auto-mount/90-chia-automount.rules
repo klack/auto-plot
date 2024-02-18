@@ -1,0 +1,6 @@
+ACTION=="add", SUBSYSTEM=="block", ENV{ID_PART_ENTRY_NAME}=="CHIA", SYMLINK+="chia/farms/%E{SCSI_IDENT_SERIAL}"
+#Create directory and mount
+ACTION=="add", SUBSYSTEM=="block", ENV{ID_PART_ENTRY_NAME}=="CHIA", RUN+="/usr/bin/mkdir -p '/chia/farms/crates/%E{SCSI_IDENT_SERIAL}'"
+ACTION=="add", SUBSYSTEM=="block", ENV{ID_PART_ENTRY_NAME}=="CHIA", RUN+="/usr/bin/mount %E{DEVNAME} '/chia/farms/crates/%E{SCSI_IDENT_SERIAL}'"
+#Remove and unmount
+ACTION=="remove", SUBSYSTEM=="block", ENV{ID_PART_ENTRY_NAME}=="CHIA", RUN+="/usr/bin/umount -l '/chia/farms/crates/%E{SCSI_IDENT_SERIAL}'", RUN+="/usr/bin/rmdir '/chi>
