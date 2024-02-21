@@ -1,1 +1,2 @@
+# Place in root crontab
 @reboot /home/klack/auto-plot/tmux_startup.sh
