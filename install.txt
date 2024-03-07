@@ -1,38 +1,42 @@
-Format m3 drive to ext4 before beginning
+#Format m3 drive to ext4 before beginning
+sudo su
+fdisk /dev/nvme0n1
+	g, n, , , , w
+mkfs.ext4 /dev/nvme0n1p1
 
 # Packages to install
-sudo apt install -y nano tmux git exfat-fuse pip parted libsodium-dev cmake g++ git build-essential
+apt install -y nano tmux git exfat-fuse pip parted libsodium-dev cmake g++ git build-essential cron
 pip install psutil
 
 # Only ask for password once
-sudo visudo
+visudo
 	Defaults        !tty_tickets
 
 # Enable mouse support in tmux
 echo "set -g mouse on" >> ~/.tmux.conf
 
 # Clone auto-plot
-cd ~/
+cd /home/klack/
 git clone https://github.com/klack/auto-plot.git
 
-# Go into root, Create needed directories
-sudo su
+#Create needed directories
 mkdir -p /chia/tmp/1 /chia/tmp/2 /chia/dst /opt
 
-# Get m3 partition uuid
+# Get m3 partition uuid 992489a2-df09-4e5c-85ba-40a1519b9fda
 blkid | grep nvm
 
 # Setup fstab
 cat /home/klack/auto-plot/fstab >> /etc/fstab
 nano /etc/fstab
+## Update /chia/tmp/1 with new partition UUID
 
 # Find the pci path of the destination drive
-# ID_PATH=pci-0000:00:1f.2-ata-5.0
-sudo udevadm test $(udevadm info -q path -n /dev/sdb) | grep ID_PATH
+# ID_PATH=pci-0000:00:1f.2-ata-6.0
+udevadm test $(udevadm info -q path -n /dev/sdb) | grep ID_PATH
 cp /home/klack/auto-plot/99-chia.rules /etc/udev/rules.d/
 
 # Make sure the pci path matches
-cat /home/klack/auto-plot/99-chia.rules
+cat /etc/udev/rules.d/99-chia.rules
 
 # Reload and trigger
 udevadm control --reload
@@ -51,10 +55,10 @@ git submodule update --init
 
 # Add to crontab
 # @reboot /home/klack/auto-plot/tmux_startup.sh
-sudo crontab -e
+crontab -e
 
 # Test
-sudo python3 /home/klack/auto-plot/auto-plot.py
+python3 /home/klack/auto-plot/auto-plot.py
 
 # Now reboot and test through ssh:
 sudo tmux attach
